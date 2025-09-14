@@ -1,0 +1,108 @@
+// rough work starts here...
+
+> detailed explanation of the proposed solution
+-> how it addresses the problem
+-> innovation and uniqueness of the solution_{
+
+%
+
+	We will be making a portal (web + app) where anyone can directly register their complaint, report civic issues (road damage, garbage, broken streetlights, drainage, water leaks, etc.),  and people  can see the status, validate resolution & give feedback, just like we see on daily used apps like, meesho, etc… 
+  
+% 
+
+	The system goes like, one have to register himself via some mail id: (nothing else will be req or asked, due to privacy reasons), can consider making id & passkey as well (optional). 
+	To register a complain, one needs to provide the issue, they are facing, along with the address, (for more accuracy, they can select the location on map, (like we select on delivery apps)), along with the pictures as proof (compulsory).
+
+
+%
+
+
+	Before complaining, one can use the search bar, to  search their address and see, if some problem which resonates with them, is prelisted or not. If prelisted, then instead of posting one new problem (which isn’t new actually), one can react ( + ), to show they also felt the same, or can repost it (we will provide that option too). This repost will be counted and will be displayed at the bottom of the issue.
+This will show urgency of the work, making it easier for authorities to solve the problem with efficiency  and also easier for we the people, to check the status of our proposed problem, 
+// (should add this or not ???) also, it can help in  selection of correct candidate during elections as well (rest no comments about election and all)
+
+%
+
+If someone tries to spam or report false issues, there will be an AI detecting system, which will report the complain automatically, which will be considered in separate section. There once more time it will be reviewed based upon rating of report (-5  means everything mentioned is useless, -1  means may be a real problem) // (may be if we can improve the rating system of report section)
+It makes system more effective by making it more transparent
+If found the problem is not genuine, then the person’s mail id: will get banned from the portal, so that he/she can’t post rubbish things again (specially the -5 rating one).
+
+%
+	
+}
+-> Technologies to be used 
+-> methodology & process for implementation{
+	
+
+
+CHALLENGES :- (OR problems with the pre-existing website) ➖➖➖
+|| the pre existing model, includes a no. of different portal for specific issue or related section, making it quite tough for people to complain
+|| very less transparency
+|| lack of digital awareness, ppl don’t know how to file complain, also feedback or the form to be filled seems to be very lengthy.
+|| poor connectivities (low internet)
+|| low quality mobiles which may not be able to execute the website
+|| ppl don’t have any idea, how long will it take to solve the issue, they raised
+|| Overlap / confusion: Is it a “water portal” issue or “civil works” or “infrastructure” etc?
+|| Difficulty in tracking or following up. Sometimes people give up because of no visible progress.
+
+}
+
+// ppt page 1 _____________________________
+
+Detailed proposed solution____
+
+
+Innovation and uniqueness ______
+ØE-commerce style tracking
+ØAi based review system
+
+
+•Technologies to be used :-
+ØFrontend : HTML, CSS, JAVASCRIPT
+ØBackend : React.js, Angular, Django, FastAPI (for maps), Java
+ØDatabases : SQL databases (MySQL), NoSQL databases (Firebase)
+ØAI/ML TensorFlow/PyTorch + NLP, for spam detection & auto flagging
+ØColud Hosting & Storage
+
+
+
+•Methodology and process for implementation :-
+ØDesign & Prototype - Roles, Workflows, MVP with complaint submission 
+ØCore Build - backend APIs, database, status tracking, secure login
+ØAI + Community - spam detection, search, upvote/repost system
+ØAuthority Dashboard + Pilot - feedback, assignment of issue
+ØDeployment & Monitoring - Scale & upgrades
+
+
+
+•Analysis of the feasibility of the idea :-
+ØTechnically feasible, Operationally feasible, &legally feasible also it’s almost zero extra cost to citizen
+ØFinancial feasibility (starting with MVP, small towns, district, etc, there are 24 districts in jharkhand)
+•Potential challenges and risks :-
+ØPoor connectivity in some regions & lack of awareness
+ØPeople don’t have any idea, how long will it take to be solved
+ØDifficulty in tracking, people sometimes give up because of no soon
+   visible progress.
+•Strategies for overcoming these challenges :-
+ØBuilding one portal (to reduce confusion, direct to respective dept via AI)
+ØUsing minimal forms (issue, photo & location of issue), multi language support, voice based description of problem
+ØEnable offline submission, will be auto synced when internet is available
+ØUsing ETA system (estimated time of arrival) based upon issue type, with updates in delays by authorities, if any
+
+
+Benefits ➖
+ØBuilds trust between citizens and government.
+ØIncreases government efficiency by automating workflows and reducing manpower required for issue intake.
+ØFaster garbage management reduces pollution and health hazards.
+ØOptimized waste collection routes lower fuel consumption.
+
+
+
+Impacts ➖
+ØTransparency: Citizens can track the status of their complaint in real time.​
+ØEmpowerment: They gain a direct channel to report issues (potholes, broken streetlights, waste).
+ØPrioritization: Governments can allocate resources better based on urgency and frequency of issues.
+ØReduced bottlenecks: Less reliance on physical visits, phone calls, or manual paperwork.
+
+
+// ends here
