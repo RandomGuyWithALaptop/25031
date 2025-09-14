@@ -16,7 +16,7 @@
     <style>
     body {
         font-family: 'Inter', sans-serif;
-        background-image: url('./gover.jpg');
+        background-image: url('Screenshot 2025-09-14 185346.png');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
