@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Grievance Viewer</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    <style>
+    body {
+        font-family: 'Inter', sans-serif;
+        background-image: url('./gover.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        transition: background-color 0.5s ease, color 0.5s ease;
+    }
+    .input-with-icon {
+            position: relative;
+            flex: 1;
+        }
+    .input-with-icon svg {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            stroke: #4B5563;
+            cursor: pointer;
+        }
+    .location-input {
+        width:100%; padding-right:2.5rem; border:1px solid #D1D5DB; border-radius:0.5rem; padding:0.75rem 1rem; cursor:pointer;
+    }
+    .location-input:focus { outline:none; border-color:#ec4899; box-shadow:0 0 0 2px #fbcfe8; }
+    #map-container { display:none; width:100%; height:400px; z-index:1000; margin-top:1rem; }
+    #map { width:100%; height:100%; }
+
+    /* Custom CSS to style the dropdown options */
+    #querySelect option {
+        color: #4A5568;
+    }
+    #map-container {
+            display: none;
+            width: 100%;
+            height: 400px;
+            z-index: 1000;
+        }
+    #map {
+            height: 100%;
+            width: 100%;
+        }
+    .dark #querySelect option {
+        color: #A0AEC0;
+    }
+    /* Set input and textarea text color for all inputs */
+    
+    </style>
+
+</head>
+<body class="bg-pink-100 text-gray-900 dark:bg-pink-300 dark:text-gray-100 transition-colors duration-500">
+
+<nav class="fixed top-0 left-0 w-full bg-white dark:bg-gray-800 shadow-md p-4 z-50 flex justify-between items-center">
+    <h1 class="text-xl md:text-2xl font-bold text-pink-600">Support Desk</h1>
+    <div class="flex items-center space-x-4">
+        <button id="nav-contact-btn" class="bg-pink-400 text-white font-bold py-2 px-6 rounded-full shadow-lg hover:bg-pink-500 transition-colors duration-300">
+            Register Problem
+        </button>
+        <button id="theme-toggle" class="p-3 rounded-full bg-gray-200 dark:bg-gray-700 shadow-xl transition-colors duration-300">
+            <svg id="sun-icon" class="h-6 w-6 text-yellow-500 dark:text-gray-400 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            <svg id="moon-icon" class="h-6 w-6 text-gray-800 dark:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+        </button>
+    </div>
+</nav>
+
+<div id="main-content-wrapper" class="container mx-auto px-4 py-12 md:py-24 max-w-4xl mt-24">
+    <header class="text-center mb-12">
+        <div class="w-32 h-32 rounded-full mx-auto mb-4 overflow-hidden shadow-lg border-4 border-black-700 dark:border-black-700">
+            <img src="https://placehold.co/128x128/9CA3AF/FFFFFF?text=SIH25031" alt="Profile Picture" class="w-full h-full object-cover">
+        </div>
+        
+        <h1 class="text-3xl md:text-4xl font-bold text-pink-900 dark:text-pink mb-2"></h1>
+    </header>
+
+    <section class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 mb-12">
+        <h2 class="text-2xl md:text-3xl font-bold dark:text-yellow-500 mb-4">About our website</h2>
+        <p class="text-gray-700 dark:text-gray-400 leading-relaxed">
+            In this website you can submit all your grievances.
+            Click on the "Submit Grievance" button above to get started.
+        </p>
+    </section>
+
+    <section class="mb-12">
+        <h1 class="text-2xl md:text-3xl font-bold text-black-800 dark:text-black mb-6 text-center">Grievance Stats</h1>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
+                <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-white">Total Grievances</h3>
+                <div class="text-blue-500 text-4xl font-bold">0</div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
+                <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-white">Grievances Solved</h3>
+                <div class="text-yellow-500 text-4xl font-bold">0</div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
+                <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-white">Grievances Processing</h3>
+                <div class="text-green-500 text-4xl font-bold">0</div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div id="contact-section" class="hidden container mx-auto px-4 py-12 md:py-24 max-w-4xl mt-24">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 text-center">
+        <h2 class="text-2xl md:text-3xl font-bold dark:text-yellow-500 mb-4">Submit a New Grievance</h2>
+        <p class="text-gray-700 dark:text-gray-400 leading-relaxed mb-6">Fill out the form below about the issue</p>
+        <form id="contact-form" class="space-y-6">
+            <div>
+                <label for="querySelect" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Type of Problem</label>
+                <select id="querySelect" name="querySelect" class="mt-1 block w-full rounded-md border-gray-700 shadow-sm focus:border-gray-700 focus:ring-pink-500 sm:text-sm p-2">
+                    <option value="" disabled selected>Select a problem type</option>
+                    <option value="Roads">Roads</option>
+                    <option value="Water Supply">Water Supply</option>
+                    <option value="Electricity">Electricity</option>
+                    <option value="Sanitation">Sanitation</option>
+                    <option value="Public Transportation">Public Transportation</option>
+                    <option value="Add your problem">Add your problem</option>
+                </select>
+            </div>
+            <div id="custom-problem-input" class="hidden">
+                <label for="customProblem" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Your Problem</label>
+                <input type="text" id="customProblem" name="customProblem" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm p-2" placeholder="e.g. Street Light Outage">
+            </div>
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Email</label>
+                <input type="email" id="email" name="email" class="mt-1 block w-full rounded-md border-gray-700 shadow-sm focus:border-gray-700 focus:ring-pink-500 sm:text-sm p-2" placeholder="you@example.com">
+            </div>
+            <div>
+                <label for="message" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Grievance Description</label>
+                <textarea id="message" name="message" rows="4" class="mt-1 block w-full rounded-md border-gray-700 shadow-sm focus:border-gray-700 focus:ring-pink-500 sm:text-sm p-2" placeholder="Describe your grievance..."></textarea>
+            </div>
+
+            <div>
+                <label for="locationInput" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Location</label>
+                <div class="relative">
+                    <input type="text" id="locationInput" readonly class="location-input" placeholder="Click to select location">
+                    <button type="button" id="openMapBtn" class="absolute inset-y-0 right-0 flex items-center pr-3">
+                        📍
+                    </button>
+                </div>
+            </div>
+
+            <div class="mt-4 flex flex-col md:flex-row gap-2">
+                <input type="text" id="pincodeInput" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 text-gray-700" placeholder="Enter Pincode">
+                <button type="button" id="pincodeSearchBtn" class="w-full md:w-auto px-4 py-3 rounded-xl text-white bg-blue-600 hover:bg-blue-700 font-medium">
+                    Search Pincode
+                </button>
+            </div>
+
+            <div class="flex justify-between items-center mt-4">
+                <button type="submit" class="inline-flex items-center justify-center rounded-md border border-transparent bg-pink-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-pink-700">Submit Grievance</button>
+                <button type="button" id="back-btn" class="px-6 py-2 rounded-full text-white bg-gray-600 hover:bg-gray-700 font-medium">Back to Home</button>
+            </div>
+        </form>
+
+        <div id="map-container">
+            <div id="map"></div>
+            <div id="map-buttons" class="hidden mt-2 flex justify-end gap-2">
+                <button id="cancelMapBtn" class="px-4 py-2 rounded-xl text-gray-600 bg-gray-200 hover:bg-gray-300">Cancel</button>
+                <button id="selectLocationBtn" class="px-4 py-2 rounded-xl text-white bg-blue-600 hover:bg-blue-700">Select Location</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="grievances-section" class="hidden container mx-auto px-4 py-12 md:py-24 max-w-4xl mt-24">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 text-center">
+        <h2 id="grievances-heading" class="text-2xl md:text-3xl font-bold dark:text-yellow-500 mb-4">
+            Grievances for <span id="query-type-name" class="text-pink-600"></span>
+        </h2>
+        <div id="grievances-container" class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6"></div>
+        <p id="no-grievances-message" class="hidden text-gray-500 mt-4">No grievances submitted for this category yet.</p>
+        <button type="button" id="back-to-contact-btn" class="px-6 py-2 rounded-full text-white bg-gray-600 hover:bg-gray-700 font-medium mt-8">Back to Form</button>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyDVExtwxyILuJaU-b6ECq2T7qtgA1OwEuA",
+    authDomain: "sih25031-16081.firebaseapp.com",
+    projectId: "sih25031-16081",
+    storageBucket: "sih25031-16081.firebasestorage.app",
+    messagingSenderId: "333077365048",
+    appId: "1:333077365048:web:383017c1cb9aaea9acc1cd",
+    measurementId: "G-LSYZH3G38W"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, query, where, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+// Firebase config (replace with your own)
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_BUCKET",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let userId;
+
+// UI elements
+const navContactBtn = document.getElementById('nav-contact-btn');
+const contactSection = document.getElementById('contact-section');
+const mainContentWrapper = document.getElementById('main-content-wrapper');
+const backBtn = document.getElementById('back-btn');
+const contactForm = document.getElementById('contact-form');
+const querySelect = document.getElementById('querySelect');
+const customProblemInputDiv = document.getElementById('custom-problem-input');
+const customProblemInput = document.getElementById('customProblem');
+const grievancesSection = document.getElementById('grievances-section');
+const grievancesContainer = document.getElementById('grievances-container');
+const noGrievancesMessage = document.getElementById('no-grievances-message');
+const queryTypeName = document.getElementById('query-type-name');
+const backToContactBtn = document.getElementById('back-to-contact-btn');
+const locationInput = document.getElementById('locationInput');
+const openMapBtn = document.getElementById('openMapBtn');
+const mapContainer = document.getElementById('map-container');
+const mapButtons = document.getElementById('map-buttons');
+const selectLocationBtn = document.getElementById('selectLocationBtn');
+const cancelMapBtn = document.getElementById('cancelMapBtn');
+const pincodeInput = document.getElementById('pincodeInput');
+const pincodeSearchBtn = document.getElementById('pincodeSearchBtn');
+
+let map, marker, selectedCoords=null, isMapVisible=false;
+
+// --- Authentication ---
+onAuthStateChanged(auth, async (user)=>{
+    if(user){
+        userId = user.uid;
+        console.log("Authenticated:", userId);
+    } else {
+        await signInAnonymously(auth);
+    }
+});
+
+// --- Map Functions ---
+function toggleMap(){
+    mapContainer.style.display = isMapVisible ? 'none' : 'block';
+    mapButtons.classList.toggle('hidden', isMapVisible);
+    isMapVisible = !isMapVisible;
+    if(!map) initializeMap();
+    else map.invalidateSize();
+}
+
+function initializeMap(){
+    map = L.map('map').setView([20.5937,78.9629],5);
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+            }).addTo(map);
+    map.on('click',(e)=>{
+        const {lat,lng} = e.latlng;
+        selectedCoords = {lat,lng};
+        if(marker) map.removeLayer(marker);
+        marker = L.marker([lat,lng]).addTo(map)
+        .bindPopup(`Lat:${lat.toFixed(4)} Lng:${lng.toFixed(4)}`)
+        .openPopup();
+    });
+}
+
+// --- Open map ---
+openMapBtn.addEventListener('click', toggleMap);
+cancelMapBtn.addEventListener('click', toggleMap);
+selectLocationBtn.addEventListener('click', ()=>{
+    if(selectedCoords){
+        locationInput.value = `Lat:${selectedCoords.lat.toFixed(4)}, Lng:${selectedCoords.lng.toFixed(4)}`;
+        toggleMap();
+    }
+});
+
+// --- Pincode search ---
+pincodeSearchBtn.addEventListener('click', async ()=>{
+    const pin = pincodeInput.value.trim();
+    if(!pin){ alert("Enter pincode"); return; }
+    try{
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?postalcode=${pin}&country=India&format=json&limit=1`);
+        const data = await res.json();
+        if(data.length>0){
+            const lat=parseFloat(data[0].lat);
+            const lon=parseFloat(data[0].lon);
+            if(!map) initializeMap();
+            map.setView([lat,lon],13);
+            if(marker) map.removeLayer(marker);
+            marker = L.marker([lat,lon]).addTo(map).bindPopup(`Pincode:${pin}`).openPopup();
+            selectedCoords={lat,lng:lon};
+            locationInput.value = data[0].display_name;
+            mapContainer.style.display='block';
+            mapButtons.classList.remove('hidden');
+        } else alert("Pincode not found");
+    }catch(e){ console.error(e); alert("Error fetching pincode"); }
+});
+
+// --- Form submission ---
+contactForm.addEventListener('submit', async e=>{
+    e.preventDefault();
+    let queryValue=querySelect.value;
+    if(queryValue==="Add your problem") queryValue=customProblemInput.value.trim();
+    const email = document.getElementById('email').value;
+    const message = document.getElementById('message').value;
+    const location = locationInput.value;
+    if(!queryValue || !email || !message){ alert("Fill all fields"); return; }
+    try{
+        await addDoc(collection(db,'grievances'),{
+            userId,
+            queryType: queryValue,
+            email,
+            message,
+            location,
+            timestamp:serverTimestamp()
+        });
+        alert("Grievance submitted!");
+        contactForm.reset();
+        locationInput.value='';
+    }catch(e){ console.error(e); alert("Error submitting grievance"); }
+});
+
+// --- Toggle custom input ---
+querySelect.addEventListener('change', ()=>{
+    if(querySelect.value==="Add your problem") customProblemInputDiv.classList.remove('hidden');
+    else customProblemInputDiv.classList.add('hidden');
+});
+
+// --- Navigation ---
+navContactBtn.addEventListener('click', ()=>{
+    mainContentWrapper.style.display='none';
+    contactSection.classList.remove('hidden');
+});
+backBtn.addEventListener('click', ()=>{
+    contactSection.classList.add('hidden');
+    mainContentWrapper.style.display='block';
+});
+backToContactBtn.addEventListener('click', ()=>{
+    grievancesSection.classList.add('hidden');
+    contactSection.classList.remove('hidden');
+});
+
+// --- Fetch grievances dynamically ---
+function fetchGrievances(queryType){
+    queryTypeName.textContent=queryType;
+    const q = query(collection(db,'grievances'), where("queryType","==",queryType));
+    onSnapshot(q,(snapshot)=>{
+        const grievances=[];
+        snapshot.forEach(doc=>grievances.push({id:doc.id,...doc.data()}));
+        renderGrievances(grievances);
+    }, (err)=>{
+        console.error(err);
+        alert("Error fetching grievances");
+    });
+}
+
+function renderGrievances(grievances){
+    grievancesContainer.innerHTML='';
+    if(grievances.length===0) noGrievancesMessage.classList.remove('hidden');
+    else {
+        noGrievancesMessage.classList.add('hidden');
+        grievances.forEach(g=>{
+            const card=document.createElement('div');
+            card.className='bg-gray-100 dark:bg-gray-700 p-6 rounded-xl shadow-lg text-left transition-transform hover:scale-105';
+            card.innerHTML=`
+                <p class="text-sm text-gray-500 dark:text-gray-400">Grievance ID: <span class="font-mono text-xs text-pink-600">${g.id}</span></p>
+                <h4 class="text-lg font-bold text-gray-900 dark:text-white mt-2">${g.queryType} Grievance</h4>
+                <p class="text-gray-700 dark:text-gray-300 mt-2">${g.message}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Location: ${g.location||'Not provided'}</p>
+            `;
+            grievancesContainer.appendChild(card);
+        });
+    }
+}
+</script>
+</body>
+</html>
